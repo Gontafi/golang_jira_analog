@@ -1,4 +1,4 @@
-module AnalogJira
+module github.com/Gontafi/golang_jira_analog
 
 go 1.21
 

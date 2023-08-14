@@ -16,8 +16,8 @@ If possible(write small test)
 PROFIT
 */
 import (
-	"AnalogJira/internal/config"
 	"fmt"
+	"github.com/Gontafi/golang_jira_analog/internal/config"
 	"github.com/gin-gonic/gin"
 	"log/slog"
 	"os"
