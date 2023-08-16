@@ -13,7 +13,9 @@ TODO:small testing
 PROFIT
 */
 import (
-	"fmt"
+	"github.com/Gontafi/golang_jira_analog/internal/config"
+	"github.com/Gontafi/golang_jira_analog/pkg/database"
+	"github.com/gin-gonic/gin/ginS"
 	"log/slog"
 	"os"
 )
@@ -24,30 +26,24 @@ const (
 	envProd  = "prod"
 )
 
-func returner() *int {
-	var asd int
-	asd = 5
-
-	return &asd
-}
 func main() {
-	fmt.Println(*returner())
-	//cfg := config.MustLoad()
-	//var (
-	//	port = cfg.Port
-	//	host = cfg.Host
-	//)
-	//log := setupLogger(cfg.Env)
-	//_ = log
-	//_, err := database.New("postgres", "postgres", "localhost", 6543, "postgres")
-	//if err != nil {
-	//	slog.Error("failed to create database", err)
-	//}
-	//
-	//err = ginS.Run(host + ":" + port)
-	//if err != nil {
-	//	slog.Error("failed to run server", err)
-	//}
+	//TODO rewrite main.go
+	cfg := config.MustLoad()
+	var (
+		port = cfg.Port
+		host = cfg.Host
+	)
+	log := setupLogger(cfg.Env)
+	_ = log
+	_, err := database.New("postgres", "postgres", "localhost", 6543, "postgres")
+	if err != nil {
+		slog.Error("failed to create database", err)
+	}
+
+	err = ginS.Run(host + ":" + port)
+	if err != nil {
+		slog.Error("failed to run server", err)
+	}
 }
 
 func setupLogger(env string) *slog.Logger {
