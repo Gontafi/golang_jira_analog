@@ -5,7 +5,7 @@ const (
 
 	CreateRole = `INSERT INTO roles VALUES ($1, $2)`
 
-	UpdateRole = `UPDATE roles SET name=$1, description=$2`
+	UpdateRole = `UPDATE roles SET name=$2, description=$3 WHERE ID = $1`
 
 	DeleteRole = `DELETE FROM roles WHERE ID = $1`
 
@@ -17,7 +17,7 @@ const (
 
 	CreateStatus = `INSERT INTO statuses VALUES ($1, $2)`
 
-	UpdateStatus = `UPDATE statuses SET Name=$1, Description=$2`
+	UpdateStatus = `UPDATE statuses SET name=$2, description=$3 WHERE ID = $1`
 
 	DeleteStatus = `DELETE FROM statuses WHERE ID = $1`
 
@@ -29,7 +29,7 @@ const (
 
 	CreatePriority = `INSERT INTO stages VALUES ($1, $2)`
 
-	UpdatePriority = `UPDATE stages SET Name=$1, Description=$2`
+	UpdatePriority = `UPDATE stages SET name=$2, description=$3 WHERE ID = $1`
 
 	DeletePriority = `DELETE FROM stages WHERE ID = $1`
 

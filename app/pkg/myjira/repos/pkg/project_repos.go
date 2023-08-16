@@ -74,7 +74,7 @@ func (r *ProjectRepos) GetAll() ([]models.Project, error) {
 
 func (r *ProjectRepos) Update(project models.Project) error {
 	_, err := r.db.Exec(r.ctx, q.UpdateProject,
-		project.Name, project.Resume, project.Description,
+		project.ID, project.Name, project.Resume, project.Description,
 		project.Code, project.ProjectLeadID, project.ProjectStartDate, project.ProjectEndDate)
 	if err != nil {
 		slog.Error("failed to update Project")
