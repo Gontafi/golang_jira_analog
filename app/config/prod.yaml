@@ -1,7 +1,19 @@
 env: "prod"
 http_server:
-  host: "localhost"
-  port: 8080
-  timeout: 4s
-  idle_timeout: 30s
-  
+  host: "0.0.0.0"
+  port: "8090"
+  timeout: "4s"
+  idle_timeout: "30s"
+  readTimeout: "30s"
+psql_config:
+  user: "postgres"
+  password-sql: "postgres"
+  host-sql: "postgres"
+  port-sql: 5432
+  db_name: "postgres"
+  ssl_mode: "disable"
+redis_config:
+  addr: "redis:6379"
+  password-redis: ""
+  db: 0
+  protocol: 3

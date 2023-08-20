@@ -3,25 +3,39 @@ package database
 import (
 	"context"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"log"
 
 	"github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
 )
 
-type Database struct {
+type PSQLConfig struct {
 	Host     string
 	Port     int
 	User     string
 	Password string
-	Dbname   string
+	DBName   string
+	SSLMode  string
 }
 
-func New(user string, password string, host string, port int, dbname string) (*pgx.Conn, error) {
+type RedisConfig struct {
+	Addr     string
+	Password string
+	DB       int
+	Protocol int
+}
+
+func ConnectPSQL(config PSQLConfig) (*pgx.Conn, error) {
 
 	psqlUrl := fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s",
-		user, password, host, port, dbname,
+		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
+		config.User,
+		config.Password,
+		config.Host,
+		config.Port,
+		config.DBName,
+		config.SSLMode,
 	)
 
 	dbCon, err := pgx.Connect(context.Background(), psqlUrl)
@@ -30,4 +44,19 @@ func New(user string, password string, host string, port int, dbname string) (*p
 	}
 
 	return dbCon, nil
+}
+
+func ConnectRedis(config RedisConfig) (*redis.Client, error) {
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     config.Addr,
+		Password: config.Password,
+		DB:       config.DB,
+	})
+
+	_, err := redisClient.Ping(context.Background()).Result()
+	if err != nil {
+		log.Fatalf("Unable to connect Redis: %s", err)
+	}
+
+	return redisClient, nil
 }

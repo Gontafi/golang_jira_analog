@@ -1,21 +1,12 @@
 package main
 
-/*
-TODO:Write handlers, services, repositories
-TODO:create api, route for crud changes
-TODO:sms code registration or forgot password(redis)
-TODO:auth by JWT
-TODO:Docker compose
-TODO:github
-TODO:logic fix
-TODO:small testing
-...
-PROFIT
-*/
 import (
+	"context"
+	app "github.com/Gontafi/golang_jira_analog"
 	"github.com/Gontafi/golang_jira_analog/internal/config"
 	"github.com/Gontafi/golang_jira_analog/pkg/database"
-	"github.com/gin-gonic/gin/ginS"
+	"github.com/Gontafi/golang_jira_analog/pkg/myjira/handler"
+	"github.com/Gontafi/golang_jira_analog/pkg/myjira/interfaces"
 	"log/slog"
 	"os"
 )
@@ -27,23 +18,57 @@ const (
 )
 
 func main() {
-	//TODO rewrite main.go
+
 	cfg := config.MustLoad()
-	var (
-		port = cfg.Port
-		host = cfg.Host
-	)
+
 	log := setupLogger(cfg.Env)
-	_ = log
-	_, err := database.New("postgres", "postgres", "localhost", 6543, "postgres")
+
+	log.Info("loaded config")
+	log.Info("Connecting to PostgresSQL")
+
+	db, err := database.ConnectPSQL(database.PSQLConfig{
+		Host:     cfg.HostSQL,
+		Port:     cfg.PortSQL,
+		User:     cfg.User,
+		Password: cfg.PasswordSQL,
+		DBName:   cfg.DBName,
+		SSLMode:  cfg.SSLMode,
+	})
 	if err != nil {
-		slog.Error("failed to create database", err)
+		log.Error("failed to connect postgres", err)
 	}
 
-	err = ginS.Run(host + ":" + port)
+	log.Info("Connected to PostgresSQL")
+	log.Info("Connecting to Redis")
+
+	rdb, err := database.ConnectRedis(database.RedisConfig{
+		Addr:     cfg.AddrRedis,
+		Password: cfg.PasswordRedis,
+		DB:       cfg.DB,
+		Protocol: cfg.Protocol,
+	})
 	if err != nil {
-		slog.Error("failed to run server", err)
+		log.Error("failed to connect redis", err)
 	}
+
+	log.Info("Connected to Redis")
+
+	ctx, cancel := context.WithTimeout(context.Background(), cfg.IdleTimeout)
+	defer cancel()
+
+	repo := interfaces.NewRepository(ctx, db, rdb)
+	service := interfaces.NewServices(repo)
+	handlers := handler.NewHandler(service)
+
+	log.Info("Starting server")
+
+	srv := new(app.Server)
+	err = srv.Run(cfg.Host, cfg.Port, cfg.Timeout, cfg.IdleTimeout, handlers.InitRoutes())
+	if err != nil {
+		log.Error("failed to run server", err)
+	}
+
+	log.Info("Server started")
 }
 
 func setupLogger(env string) *slog.Logger {
@@ -67,6 +92,5 @@ func setupLogger(env string) *slog.Logger {
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
 		)
 	}
-
 	return log
 }

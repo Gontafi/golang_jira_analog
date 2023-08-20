@@ -8,8 +8,10 @@ import (
 )
 
 type Config struct {
-	Env        string `yaml:"env" enn-default:"local"`
-	HTTPServer `yaml:"http_server"`
+	Env         string `yaml:"env" enn-default:"local"`
+	HTTPServer  `yaml:"http_server"`
+	PSQLConfig  `yaml:"psql_config"`
+	RedisConfig `yaml:"redis_config"`
 }
 
 type HTTPServer struct {
@@ -19,8 +21,24 @@ type HTTPServer struct {
 	IdleTimeout time.Duration `yaml:"idle_timeout" end-default:"60s"`
 }
 
+type PSQLConfig struct {
+	User        string `yaml:"user" env-default:"postgres"`
+	PasswordSQL string `yaml:"password-sql" env-default:"postgres"`
+	HostSQL     string `yaml:"host-sql" env-default:"localhost"`
+	PortSQL     int    `yaml:"port-sql" env-default:"6543"`
+	DBName      string `yaml:"db_name" env-default:"postgres"`
+	SSLMode     string `yaml:"ssl-mode" env-default:"disable"`
+}
+
+type RedisConfig struct {
+	AddrRedis     string `yaml:"addr" env-default:"localhost:6379"`
+	PasswordRedis string `yaml:"password-redis" env-default:""`
+	DB            int    `yaml:"db" env-default:"0"`
+	Protocol      int    `yaml:"protocol" enf-default:"3"`
+}
+
 func MustLoad() *Config {
-	configPath := "C:\\Users\\ПК\\GolandProjects\\AnalogJira\\config\\prod.yaml"
+	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH is not set")
 	}
