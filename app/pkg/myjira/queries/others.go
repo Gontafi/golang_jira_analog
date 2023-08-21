@@ -9,7 +9,7 @@ const (
 
 	DeleteRole = `DELETE FROM roles WHERE ID = $1`
 
-	GetRoles = `SELECT (id, name, description) FROM roles`
+	GetRoles = `SELECT id, name, description FROM roles`
 
 	GetRoleById = `SELECT * FROM roles WHERE ID = $1`
 
@@ -21,19 +21,7 @@ const (
 
 	DeleteStatus = `DELETE FROM statuses WHERE ID = $1`
 
-	GetStatuses = `SELECT (ID, Name, Description) FROM statuses`
+	GetStatuses = `SELECT ID, Name, Description FROM statuses`
 
 	GetStatusById = `SELECT * FROM statuses WHERE ID = $1`
-
-	// Priority
-
-	CreatePriority = `INSERT INTO stages VALUES ($1, $2)`
-
-	UpdatePriority = `UPDATE stages SET name=$2, description=$3 WHERE ID = $1`
-
-	DeletePriority = `DELETE FROM stages WHERE ID = $1`
-
-	GetPriorities = `SELECT (ID, Name, Description) FROM stages`
-
-	GetPriorityById = `SELECT * FROM stages WHERE ID = $1`
 )

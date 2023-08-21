@@ -7,7 +7,7 @@ const (
 
 	DeleteComment = `DELETE FROM comments WHERE ID = $1`
 
-	GetComments = `SELECT (ID, issue_id, user_id, comment_text, created_at) FROM comments`
+	GetComments = `SELECT ID, issue_id, user_id, comment_text, created_at FROM comments`
 
 	GetCommentById = `SELECT * FROM comments WHERE ID = $1`
 )

@@ -78,7 +78,7 @@ func (r *UserRepos) GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	for rows.Next() {
 		var user models.User
-		err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.FullName,
+		err := rows.Scan(&user.ID, &user.Username, &user.FullName,
 			&user.Email, &user.RoleID, &user.CreatedAt, &user.UpdatedAt)
 		if err != nil {
 			return nil, err

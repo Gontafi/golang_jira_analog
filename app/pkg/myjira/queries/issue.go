@@ -5,7 +5,7 @@ const (
 
 	UpdateIssue = `UPDATE issues SET project_id=$2, issue_type_id=$3, 
                 issue_summary=$4, issue_description=$5, reporter_id=$6, assignee_id=$7,
-                stage_id=$8, status_id=$9, updated_at=$10, updated_at=$11, resolved_at=$12 WHERE id=$1`
+                status_id=$8, updated_at=$9, updated_at=$10, resolved_at=$11 WHERE id=$1`
 
 	DeleteIssue = `DELETE FROM issues WHERE ID = $1`
 

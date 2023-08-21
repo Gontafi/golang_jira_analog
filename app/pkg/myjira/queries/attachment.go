@@ -8,7 +8,7 @@ const (
 
 	DeleteAttachment = `DELETE FROM attachments WHERE ID = $1`
 
-	GetAttachments = `SELECT (ID, issue_id, file_name, file_size, uploaded_by_user_id, uploaded_date) FROM attachments`
+	GetAttachments = `SELECT ID, issue_id, file_name, file_size, uploaded_by_user_id, uploaded_date FROM attachments`
 
 	GetAttachmentById = `SELECT * FROM attachments WHERE ID = $1`
 )

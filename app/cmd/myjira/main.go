@@ -53,8 +53,7 @@ func main() {
 
 	log.Info("Connected to Redis")
 
-	ctx, cancel := context.WithTimeout(context.Background(), cfg.IdleTimeout)
-	defer cancel()
+	ctx := context.Background()
 
 	repo := interfaces.NewRepository(ctx, db, rdb)
 	service := interfaces.NewServices(repo)
@@ -67,8 +66,7 @@ func main() {
 	if err != nil {
 		log.Error("failed to run server", err)
 	}
-
-	log.Info("Server started")
+	log.Info("Server closed")
 }
 
 func setupLogger(env string) *slog.Logger {

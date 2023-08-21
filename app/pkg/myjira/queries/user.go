@@ -9,8 +9,8 @@ const (
 
 	DeleteUser = `DELETE FROM users WHERE ID = $1`
 
-	GetUsers = `SELECT (ID, Username, password_hash, full_name, Email, 
-                  role_id, created_at, updated_at) FROM users`
+	GetUsers = `SELECT ID, Username, full_name, Email, 
+                  role_id, created_at, updated_at FROM users`
 
 	GetUserById = `SELECT * FROM users WHERE ID = $1`
 
