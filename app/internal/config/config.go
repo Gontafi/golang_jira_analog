@@ -1,57 +1,70 @@
 package config
 
 import (
-	"github.com/ilyakaznacheev/cleanenv"
+	"fmt"
+	"github.com/spf13/viper"
 	"log"
 	"os"
 	"time"
 )
 
 type Config struct {
-	Env         string `yaml:"env" enn-default:"local"`
-	HTTPServer  `yaml:"http_server"`
-	PSQLConfig  `yaml:"psql_config"`
-	RedisConfig `yaml:"redis_config"`
+	HttpServerConfig HttpServerConfig `mapstructure:"http_server"`
+	PsqlConfig       PsqlConfig       `mapstructure:"psql_config"`
+	RedisConfig      RedisConfig      `mapstructure:"redis_config"`
 }
 
-type HTTPServer struct {
-	Host        string        `yaml:"host" env-default:"localhost"`
-	Port        string        `yaml:"port" env-default:"8080"`
-	Timeout     time.Duration `yaml:"timeout" env-default:"5s"`
-	IdleTimeout time.Duration `yaml:"idle_timeout" end-default:"60s"`
+type HttpServerConfig struct {
+	Host        string
+	Port        string
+	Timeout     time.Duration
+	IdleTimeout time.Duration
+	ReadTimeout time.Duration
 }
 
-type PSQLConfig struct {
-	User        string `yaml:"user" env-default:"postgres"`
-	PasswordSQL string `yaml:"password-sql" env-default:"postgres"`
-	HostSQL     string `yaml:"host-sql" env-default:"localhost"`
-	PortSQL     int    `yaml:"port-sql" env-default:"6543"`
-	DBName      string `yaml:"db_name" env-default:"postgres"`
-	SSLMode     string `yaml:"ssl-mode" env-default:"disable"`
+type PsqlConfig struct {
+	User     string
+	Password string `mapstructure:"password-sql"`
+	Host     string `mapstructure:"host-sql"`
+	Port     int    `mapstructure:"port-sql"`
+	DBName   string `mapstructure:"db_name"`
+	SSLMode  string `mapstructure:"ssl_mode"`
 }
 
 type RedisConfig struct {
-	AddrRedis     string `yaml:"addr" env-default:"localhost:6379"`
-	PasswordRedis string `yaml:"password-redis" env-default:""`
-	DB            int    `yaml:"db" env-default:"0"`
-	Protocol      int    `yaml:"protocol" enf-default:"3"`
+	Addr     string
+	Password string `mapstructure:"password-redis"`
+	DB       int
+	Protocol int
 }
 
 func MustLoad() *Config {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
-		log.Fatal("CONFIG_PATH is not set")
+		log.Println("Config path is not set")
+		return &Config{}
 	}
-
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		log.Fatalf("config file does not exists : %s", err)
 	}
 
-	var cfg Config
+	viper.AddConfigPath(configPath)
+	viper.SetConfigName("prod")
+	viper.SetConfigType("yaml")
 
-	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
-		log.Fatalf("can not read config %s", err)
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Println("failed to read config, Error:", err)
+		return &Config{}
 	}
 
+	var cfg Config
+
+	if err := viper.Unmarshal(&cfg); err != nil {
+		log.Fatalf("Error unmarshaling config: %s", err)
+	}
+
+	fmt.Println(cfg.PsqlConfig.Host)
+	fmt.Println(cfg.PsqlConfig.Port)
 	return &cfg
 }

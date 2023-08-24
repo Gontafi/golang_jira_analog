@@ -29,7 +29,7 @@ services:
     container_name: myjira-container
     restart: always
     environment:
-      CONFIG_PATH: ./config/prod.yaml
+      CONFIG_PATH: ./config/
     ports:
       - "8080:8090"
     depends_on:
