@@ -88,7 +88,7 @@ func (s *AuthService) VerifyResetCode(username string, code string) error {
 	if err != nil {
 		return err
 	}
-	//TODO
+
 	if storedCode != code {
 		return errors.New("invalid reset code")
 	}
@@ -107,7 +107,7 @@ func generateResetCode() string {
 }
 
 func (s *AuthService) ChangeUserPassword(username string, password string) error {
-	err := s.r.ChangePassword(username, password)
+	err := s.r.ChangePassword(username, generateHashPasswordHash(password))
 	if err != nil {
 		return err
 	}
